@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="TournamentBot.Gameplay.Game" Collapsed="true">
+    <Position X="2.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAAAAAABAACAAEwACAAAAAAAQBAAAAAAAAAAICAAA=</HashCode>
+      <FileName>Gameplay\Game.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TournamentBot.Gameplay.Player" Collapsed="true">
+    <Position X="2.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAoAAAAAAAEAEAAQAQAAAgAAAgAAAABAAAAAAA=</HashCode>
+      <FileName>Gameplay\Player.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TournamentBot.Gameplay.Tournament">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAEQEAAEAEAAAEEAAAAAAApAAgACAQAAEgQAAA=</HashCode>
+      <FileName>Gameplay\Tournament.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="TournamentBot.Gameplay.ITournamentElement">
+    <Position X="11.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Gameplay\ITournamentElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TournamentBot.Gameplay.ITournament">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAQAAAAAEAAAAEAAAAAAApAAAACAQAAAAAAAA=</HashCode>
+      <FileName>Gameplay\ITournament.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TournamentBot.Gameplay.IGame">
+    <Position X="11.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAABAACAAAwACAAAAAAAABAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Gameplay\IGame.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TournamentBot.Gameplay.IPlayer">
+    <Position X="8.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAEAAQAQAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Gameplay\IPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="TournamentBot.Gameplay.GameResult">
+    <Position X="13.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAgAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Gameplay\ITournamentElement.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
