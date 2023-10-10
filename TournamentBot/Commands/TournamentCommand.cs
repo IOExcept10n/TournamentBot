@@ -6,9 +6,9 @@ using TournamentBot.Gameplay;
 
 namespace TournamentBot.Commands
 {
-    internal class TournamentCommand : Command
+    internal abstract class TournamentCommand : Command
     {
-        public TournamentCommand() : base("tournament")
+        public TournamentCommand(string name, params string[] aliases) : base(name, aliases)
         {
         }
 
@@ -18,99 +18,32 @@ namespace TournamentBot.Commands
             long author = message.From?.Id ?? 0;
             UserControlSystem.UserTournaments.TryGetValue(author, out var tournament);
             StringBuilder output = new();
-            if (arguments.Length > 1)
+            bool result = PerformCommand(author, arguments, ref tournament, output);
+            if (output.Length > 0)
             {
-                switch (arguments[1])
+                if (tournament != null)
                 {
-                    case "start":
-                        if (tournament != null)
-                        {
-                            await client.SendTextMessageAsync(message.Chat.Id, "Sorry, you've already started a tournament.", cancellationToken: token);
-                            return;
-                        }
-                        else
-                        {
-                            tournament = new Tournament(arguments.Skip(2));
-                            tournament.Ended += (s, e) =>
-                            {
-                                UserControlSystem.UserTournaments.TryRemove(author, out _);
-                            };
-                            if (UserControlSystem.UserTournaments.TryAdd(author, tournament))
-                            {
-                                output.AppendLine("The tournament was successfully created!");
-                            }
-                            else
-                            {
-                                await client.SendTextMessageAsync(message.Chat.Id, "Sorry, please try add the tournament again.", cancellationToken: token);
-                                return;
-                            }
-                        }
-                        break;
-
-                    case "cancel":
-                    case "end":
-                        if (tournament != null)
-                        {
-                            tournament.Cancel();
-                            UserControlSystem.UserTournaments.TryRemove(author, out _);
-                            output.AppendLine("The tournament has been successfully cancelled.");
-                        }
-                        else
-                        {
-                            output.Append("Can't get the tournament info.");
-                        }
-                        break;
-
-                    case "games":
-                        if (tournament != null)
-                        {
-                            TournamentCommandHelpers.FillGames(tournament, output);
-                        }
-                        else
-                        {
-                            output.Append("Can't get the tournament info.");
-                        }
-                        break;
-
-                    case "leaderboard":
-                        if (tournament != null)
-                        {
-                            TournamentCommandHelpers.FillLeaderboard(tournament, output);
-                        }
-                        else
-                        {
-                            output.Append("Can't get the tournament info.");
-                        }
-                        break;
-
-                    case "tree":
-                        if (tournament != null)
-                        {
-                            output.AppendLine("The tournament tree: ");
-                            tournament.DrawTree(output);
-                            output.AppendLine();
-                        }
-                        else
-                        {
-                            output.Append("Can't get the tournament info.");
-                        }
-                        break;
-
-                    default:
-                        {
-                            output.AppendLine("Cannot resolve the command you've asked for.");
-                            break;
-                        }
+                    var markup = TournamentCommandHelpers.CreateKeyboardMarkup(tournament);
+                    if (result) 
+                    {
+                        TournamentCommandHelpers.FillInfo(tournament, output);
+                    }
+                    await client.SendTextMessageAsync(message.Chat.Id,
+                                                 output.ToString(),
+                                                 replyMarkup: markup,
+                                                 cancellationToken: token,
+                                                 parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                }
+                else
+                {
+                    await client.SendTextMessageAsync(message.Chat.Id,
+                                                 output.ToString(),
+                                                 cancellationToken: token,
+                                                 parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
             }
-            if (tournament != null)
-            {
-                TournamentCommandHelpers.FillInfo(tournament, output);
-                await client.SendTextMessageAsync(message.Chat.Id,
-                                                  output.ToString(),
-                                                  replyMarkup: TournamentCommandHelpers.CreateKeyboardMarkup(tournament),
-                                                  cancellationToken: token);
-            }
         }
+
+        protected abstract bool PerformCommand(long author, string[] arguments, ref ITournament? tournament, StringBuilder output);
     }
 }

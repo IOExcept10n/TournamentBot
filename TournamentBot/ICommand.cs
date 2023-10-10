@@ -6,6 +6,7 @@ namespace TournamentBot
     internal interface ICommand
     {
         public string Name { get; }
+        public HashSet<string> Aliases { get; }
 
         public Task HandleAsync(ITelegramBotClient client, Message message, CancellationToken token);
     }
@@ -14,9 +15,17 @@ namespace TournamentBot
     {
         public string Name { get; }
 
-        public Command(string name)
+        public HashSet<string> Aliases { get; }
+
+        public Command(string name, IEnumerable<string>? aliases = null)
         {
             Name = name;
+            if (aliases == null)
+                Aliases = new();
+            else
+            {
+                Aliases = new(aliases);
+            }
         }
 
         public abstract Task HandleAsync(ITelegramBotClient client, Message message, CancellationToken token);
@@ -30,7 +39,7 @@ namespace TournamentBot
 
         public static Task HandleCommandAsync(string command, ITelegramBotClient client, Message message, CancellationToken token)
         {
-            return Commands.First(x => x.Name.Equals(command)).HandleAsync(client, message, token);
+            return Commands.First(x => x.Name.Equals(command, StringComparison.InvariantCultureIgnoreCase) || x.Aliases.Contains(command)).HandleAsync(client, message, token);
         }
     }
 }

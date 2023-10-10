@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+	<PropertyGroup>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -14,12 +19,32 @@
     <Copyright>© IOExcept10n 2023</Copyright>
   </PropertyGroup>
 
+<PropertyGroup>
+	<!-- Вот это самое главное -->
+	<PublishSingleFile>true</PublishSingleFile>
+	<!-- Это чтобы тащить за собой рантайм До .NET 6 будут рядом лежать нативные библиотеки jit-а и сборщика мусора-->
+	<SelfContained>true</SelfContained>
+	<!-- Это необходимо, чтобы сборщик понимал, для какой ОС нужен экзешник -->
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<!-- Это чтобы ускорить запуск -->
+	<PublishReadyToRun>true</PublishReadyToRun>
+	<!-- Эти две строки, чтобы уменьшить размер бинарника -->
+	<PublishTrimmed>true</PublishTrimmed>
+	<TrimMode>link</TrimMode>
+</PropertyGroup>
+	
   <ItemGroup>
     <Content Include="Pictogrammers-Material-Tournament.512.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="token.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

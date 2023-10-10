@@ -20,8 +20,12 @@ namespace TournamentBot
             CommandManager.Commands = new()
             {
                 new StartCommand(),
-                new TournamentCommand(),
-                new TournamentWinCommand()
+                new TournamentBeginCommand(),
+                new TournamentWinCommand(),
+                new TournamentEndCommand(),
+                new TournamentGamesCommand(),
+                new LeaderboardCommand(),
+                new TreeCommand()
             };
             using CancellationTokenSource cts = new();
             ReceiverOptions options = new()
@@ -56,31 +60,45 @@ namespace TournamentBot
                     }
                 case UpdateType.CallbackQuery:
                     {
-                        var query = update.CallbackQuery!;
-                        string name = query.Data ?? "";
-                        long author = query.From.Id;
-                        UserControlSystem.UserTournaments.TryGetValue(author, out var tournament);
-                        StringBuilder output = new();
-                        if (tournament != null)
+                        try
                         {
-                            tournament.RegisterWin(name);
-                            output.AppendLine($"Player {name} won successfully.");
-                            TournamentCommandHelpers.FillInfo(tournament, output);
-                            await client.EditMessageTextAsync(chatId: query.Message!.Chat.Id,
-                                                              messageId: query.Message!.MessageId,
-                                                              text: output.ToString(),
-                                                              replyMarkup: TournamentCommandHelpers.CreateKeyboardMarkup(tournament),
-                                                              cancellationToken: token);
+                            var query = update.CallbackQuery!;
+                            string name = query.Data ?? "";
+                            long author = query.From.Id;
+                            UserControlSystem.UserTournaments.TryGetValue(author, out var tournament);
+                            StringBuilder output = new();
+                            if (tournament != null)
+                            {
+                                tournament.RegisterWin(name);
+                                output.AppendLine($"Player {name} won successfully.");
+                                TournamentCommandHelpers.FillInfo(tournament, output);
+                                await client.EditMessageTextAsync(chatId: query.Message!.Chat.Id,
+                                                                  messageId: query.Message!.MessageId,
+                                                                  text: output.ToString(),
+                                                                  replyMarkup: TournamentCommandHelpers.CreateKeyboardMarkup(tournament),
+                                                                  cancellationToken: token);
+                            }
+                            else
+                            {
+                                output.AppendLine("Sorry, can't set the player win in the current state..");
+                                if (tournament != null) TournamentCommandHelpers.FillInfo(tournament, output);
+                                await client.EditMessageTextAsync(chatId: query.Message!.Chat.Id,
+                                                                  messageId: query.Message!.MessageId,
+                                                                  text: output.ToString(),
+                                                                  replyMarkup: tournament != null ? TournamentCommandHelpers.CreateKeyboardMarkup(tournament) : null,
+                                                                  cancellationToken: token);
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            output.AppendLine("Sorry, can't set the player win in the current state..");
-                            if (tournament != null) TournamentCommandHelpers.FillInfo(tournament, output);
-                            await client.EditMessageTextAsync(chatId: query.Message!.Chat.Id,
-                                                              messageId: query.Message!.MessageId,
-                                                              text: output.ToString(),
-                                                              replyMarkup: tournament != null ? TournamentCommandHelpers.CreateKeyboardMarkup(tournament) : null,
-                                                              cancellationToken: token);
+                            await client.SendTextMessageAsync(
+                                chatId: update.CallbackQuery!.Message!.Chat.Id,
+                                cancellationToken: token,
+                                text: "The error while handling the query. Please, try again."
+#if DEBUG
+                                + $"\nError details: {ex.Message}"
+#endif
+                                );
                         }
                         break;
                     }

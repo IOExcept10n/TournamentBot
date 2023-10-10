@@ -21,7 +21,7 @@ namespace TournamentBot.Gameplay
             {
                 return leaderboardReady ?
                     leaderboard :
-                    Enumerable.Repeat<Player?>(null, allPlayers.Count - remainPlayers.Count).Concat(Enumerable.Reverse(leaderboard));
+                    Enumerable.Repeat<Player?>(null, allPlayers.Count - leaderboard.Count).Concat(Enumerable.Reverse(leaderboard));
             }
         }
 
@@ -37,7 +37,7 @@ namespace TournamentBot.Gameplay
 
         public event EventHandler? Ended = delegate { };
 
-        public Tournament(IEnumerable<string> members)
+        public Tournament(int key, IEnumerable<string> members)
         {
             // Define the lists.
             allPlayers = new();
@@ -71,7 +71,7 @@ namespace TournamentBot.Gameplay
                 allPlayers.Add(fakePlayer);
             }
             // Shuffle the players.
-            Random rand = new();
+            Random rand = new(key);
             remainPlayers = new(allPlayers.OrderBy(x => rand.Next()));
             // Start creating the tournament grid.
             // Stage 1: Define initial games - add players in pairs.
